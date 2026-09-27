@@ -1,4 +1,4 @@
-# AI-Based Food Waste Prediction — Web Application
+# AI-Based Food Waste Prediction
 
 This repository contains my **upgraded version of the previous AI-Based Food Waste Prediction project**. The earlier version was primarily a Python-based machine-learning script that required predictions to be run directly from the code and displayed the results in the terminal.
 
@@ -147,3 +147,4 @@ The project is aligned with **SDG 12: Responsible Consumption and Production** b
 ## Author
 
 Keanu Stadeva
+Computer Science
