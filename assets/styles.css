@@ -11,13 +11,8 @@
     #f8faf9;
 }
 
-[data-testid="stSidebar"] {
-  border-right: 1px solid #e7eaee;
-}
-
-.hero {
-  padding: 1.4rem 0 0.7rem;
-}
+[data-testid="stSidebar"] { border-right: 1px solid #e7eaee; }
+.hero { padding: 1.4rem 0 0.7rem; }
 
 .eyebrow {
   margin-bottom: 0.45rem;
@@ -42,10 +37,7 @@
   font-size: 1.02rem;
 }
 
-.info-card,
-.result-card,
-.recommendation-card,
-.note-card {
+.info-card, .result-card, .recommendation-card, .note-card {
   padding: 1.1rem 1.2rem;
   background: rgba(255, 255, 255, 0.9);
   border: 1px solid #e7eaee;
@@ -53,12 +45,9 @@
   box-shadow: 0 6px 22px rgba(16, 24, 40, 0.04);
 }
 
-.note-card {
-  margin-top: 0.8rem;
-}
+.note-card { margin-top: 0.8rem; }
 
-.risk-high,
-.risk-low {
+.risk-high, .risk-low {
   display: inline-block;
   padding: 0.35rem 0.6rem;
   border-radius: 999px;
@@ -67,45 +56,21 @@
   letter-spacing: 0.05em;
 }
 
-.risk-high {
-  color: #b42318;
-  background: #fff1f0;
-  border: 1px solid #ffc9c5;
-}
-
-.risk-low {
-  color: #067647;
-  background: #ecfdf3;
-  border: 1px solid #abefc6;
-}
+.risk-high { color: #b42318; background: #fff1f0; border: 1px solid #ffc9c5; }
+.risk-low { color: #067647; background: #ecfdf3; border: 1px solid #abefc6; }
 
 .result-title {
-  margin-top: 0.65rem;
-  margin-bottom: 0.2rem;
+  margin: 0.65rem 0 0.2rem;
   font-size: 1.5rem;
   font-weight: 700;
 }
 
-.result-subtitle,
-.small-muted {
-  color: #667085;
-}
+.result-subtitle, .small-muted { color: #667085; }
+.result-subtitle { margin-bottom: 0; }
+.small-muted { font-size: 0.9rem; }
+.recommendation-card h4, .note-card h4 { margin: 0 0 0.45rem; }
 
-.result-subtitle {
-  margin-bottom: 0;
-}
-
-.small-muted {
-  font-size: 0.9rem;
-}
-
-.recommendation-card h4,
-.note-card h4 {
-  margin: 0 0 0.45rem;
-}
-
-.model-card,
-div[data-testid="stMetric"] {
+.model-card, div[data-testid="stMetric"] {
   box-sizing: border-box;
   min-height: 106px;
   padding: 0.9rem 1rem;
@@ -114,18 +79,10 @@ div[data-testid="stMetric"] {
   border-radius: 16px;
 }
 
-.model-label {
-  margin-bottom: 0.45rem;
-  font-size: 0.9rem;
-}
+.model-label { margin-bottom: 0.45rem; font-size: 0.9rem; }
+.model-value { font-size: 1.55rem; line-height: 1.2; }
 
-.model-value {
-  font-size: 1.55rem;
-  line-height: 1.2;
-}
-
-.stButton > button,
-.stFormSubmitButton > button {
+.stButton > button, .stFormSubmitButton > button {
   width: 100%;
   min-height: 3rem;
   border-radius: 12px;
@@ -133,11 +90,6 @@ div[data-testid="stMetric"] {
 }
 
 @media (max-width: 700px) {
-  .block-container {
-    padding-top: 1.4rem;
-  }
-
-  .hero h1 {
-    font-size: 2.2rem;
-  }
+  .block-container { padding-top: 1.4rem; }
+  .hero h1 { font-size: 2.2rem; }
 }
