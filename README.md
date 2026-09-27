@@ -147,4 +147,3 @@ The project is aligned with **SDG 12: Responsible Consumption and Production** b
 ## Author
 
 Keanu Stadeva
-Computer Science

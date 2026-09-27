@@ -179,10 +179,27 @@ else:
     )
 
     c1, c2, c3 = st.columns(3)
-    c1.metric("Model", metadata.get("model", "Decision Tree"))
-    c2.metric("Dataset rows", metadata.get("dataset_rows", "—"))
+
+    with c1:
+        st.markdown(
+            f"""
+            <div class="model-card">
+                <div class="model-label">Model</div>
+                <div class="model-value">{metadata.get("model", "Decision Tree Classifier")}</div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+    with c2:
+        st.metric("Dataset rows", metadata.get("dataset_rows", "—"))
+
     accuracy = metadata.get("accuracy")
-    c3.metric("Test accuracy", f"{accuracy:.0%}" if isinstance(accuracy, (float, int)) else "—")
+    with c3:
+        st.metric(
+            "Test accuracy",
+            f"{accuracy:.0%}" if isinstance(accuracy, (float, int)) else "—",
+        )
 
     st.subheader("Features used by the current model")
     st.code("stok, terjual, hari_ke, cuaca, hari_besar, sisa_persen", language="text")

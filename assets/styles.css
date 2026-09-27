@@ -107,6 +107,30 @@
   font-size: .88rem;
 }
 
+.model-card {
+  background: rgba(255,255,255,.84);
+  border: 1px solid #e7eaee;
+  padding: .9rem 1rem;
+  border-radius: 16px;
+  min-height: 106px;
+  box-sizing: border-box;
+}
+
+.model-label {
+  font-size: .9rem;
+  margin-bottom: .45rem;
+}
+
+.model-value {
+  font-size: 1.75rem;
+  line-height: 1.15;
+  font-weight: 400;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+  word-break: normal;
+}
+
 div[data-testid="stMetric"] {
   background: rgba(255,255,255,.84);
   border: 1px solid #e7eaee;
