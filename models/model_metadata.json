@@ -1,0 +1,16 @@
+{
+  "model": "Decision Tree Classifier",
+  "criterion": "entropy",
+  "max_depth": 4,
+  "accuracy": 1.0,
+  "dataset_rows": 80,
+  "features": [
+    "stok",
+    "terjual",
+    "hari_ke",
+    "cuaca",
+    "hari_besar",
+    "sisa_persen"
+  ],
+  "trained_at_utc": "2026-09-27T10:05:57.720184+00:00"
+}
