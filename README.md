@@ -1,119 +1,38 @@
 # AI-Based Food Waste Prediction
 
-This repository contains my **upgraded version of the previous AI-Based Food Waste Prediction project**. The earlier version was primarily a Python-based machine-learning script that required predictions to be run directly from the code and displayed the results in the terminal.
+A simple machine learning project that predicts whether an inventory condition is **Safe** or has **Potential Waste**. The project uses a Decision Tree classifier and a Streamlit interface so predictions can be tested without editing Python code manually.
 
-In this upgraded version, the project has been developed into a more usable **Streamlit web application**. Users can enter inventory information through a simple interface, while preprocessing, prediction, remaining-stock calculation, and result presentation are handled automatically by the system. The core machine-learning concept is retained, but the project structure and user experience have been improved to make it more suitable as an interactive AI application and portfolio project.
+## About
 
-## Project Evolution
-
-**Previous version:** Python script → hard-coded input → terminal prediction.  
-**Upgraded version:** Web form → automatic preprocessing → saved ML model → prediction result + recommendation.
-
-This upgrade focuses on improving the usability, structure, and presentation of the existing project rather than replacing the original idea with a completely different system.
-
-## What Changed
-
-### Before
+The original project used a Python script with a hard-coded sample input. This upgraded version keeps the same main idea but separates model training from prediction and adds a small web interface.
 
 ```text
-CSV dataset → main.py → train model → hard-coded sample → terminal output
+Dataset -> Train Decision Tree -> Save Model -> Streamlit Form -> Prediction
 ```
 
-A new prediction required changing the sample values inside Python and running the script again.
+## Features
 
-### After
+- Manual inventory input through Streamlit
+- Automatic remaining-stock calculation
+- Safe / Potential Waste classification
+- Simple recommendation based on the prediction result
+- Model information page
+- Decision Tree visualization
 
-```text
-User form → automatic preprocessing → saved Decision Tree model → prediction → result + recommendation
-```
+## Technologies
 
-The dataset is still used to train the model, but **the end user does not upload the dataset**. Users interact with the system through the Streamlit web interface.
+- Python
+- Streamlit
+- Pandas
+- Scikit-learn
+- Matplotlib
+- Joblib
 
-## User Input
+## Dataset
 
-The user enters:
+The project includes `data/data_penjualan.csv` with 80 rows.
 
-- Product name — used only as a display identifier
-- Available stock
-- Items sold
-- Date
-- Weather condition code
-- Holiday / special-day status
-
-The application automatically calculates:
-
-- Remaining stock
-- Remaining-stock percentage
-- Day index from the selected date
-- Numeric special-day value used by the model
-
-> Note: the supplied dataset encodes `cuaca` as `0` and `1`, but the project files do not define what those two codes mean in real-world terms. The interface therefore keeps them as Condition 0 and Condition 1 instead of inventing labels.
-
-## Project Structure
-
-```text
-Food-Waste-Prediction/
-├── app.py
-├── assets/
-│   └── styles.css
-├── data/
-│   └── data_penjualan.csv
-├── images/
-│   └── decision_tree.png
-├── models/
-│   ├── food_waste_model.joblib
-│   └── model_metadata.json
-├── src/
-│   ├── main.py
-│   ├── predictor.py
-│   └── train_model.py
-├── .streamlit/
-│   └── config.toml
-├── requirements.txt
-└── README.md
-```
-
-## Installation
-
-```bash
-pip install -r requirements.txt
-```
-
-## 1. Train the Model
-
-Run this whenever the dataset changes or when the model file has not been created yet:
-
-```bash
-python src/train_model.py
-```
-
-This creates:
-
-```text
-models/food_waste_model.joblib
-models/model_metadata.json
-```
-
-It also updates the Decision Tree visualization in `images/decision_tree.png`.
-
-## 2. Run the Web Application
-
-```bash
-streamlit run app.py
-```
-
-Then open the local Streamlit address shown in the terminal.
-
-## Current Model
-
-- Algorithm: Decision Tree Classifier
-- Criterion: Entropy
-- Maximum depth: 4
-- Training split: 80%
-- Testing split: 20%
-- Dataset: simulated supermarket sales data
-
-Features currently used by the model:
+Model features:
 
 ```text
 stok
@@ -124,25 +43,88 @@ hari_besar
 sisa_persen
 ```
 
-## Why the Model Is Saved Separately
+Target:
 
-The original script retrained the model whenever the Python program was run. In the upgraded version, training and prediction are separated. The web application loads a previously trained model, so a user can make predictions without retraining it every time.
+```text
+label
+```
+
+- `0` = Safe
+- `1` = Potential Waste
+
+The original source of the dataset is **not documented in the supplied project files**. The meaning of weather codes `0` and `1` is also not documented, so the application keeps them as raw codes.
+
+In the current dataset, `sisa_persen` is calculated from stock and sold values, and the labels follow a very simple remaining-stock pattern. Because of this and the small dataset size, the evaluation result should not be treated as proof of real-world performance.
+
+## Project Structure
+
+```text
+Upgrade-Food-Waste-Prediction/
+├── app.py
+├── assets/
+│   └── styles.css
+├── data/
+│   ├── data_penjualan.csv
+│   └── README.md
+├── images/
+│   └── decision_tree.png
+├── models/
+│   ├── food_waste_model.joblib
+│   └── model_metadata.json
+├── src/
+│   ├── predictor.py
+│   └── train_model.py
+├── .streamlit/
+│   └── config.toml
+├── requirements.txt
+└── README.md
+```
+
+## How to Run
+
+### 1. Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 2. Train the model
+
+```bash
+python src/train_model.py
+```
+
+This creates or updates:
+
+```text
+models/food_waste_model.joblib
+models/model_metadata.json
+images/decision_tree.png
+```
+
+### 3. Run the application
+
+```bash
+streamlit run app.py
+```
+
+## Current Model
+
+- Algorithm: Decision Tree Classifier
+- Criterion: Entropy
+- Maximum depth: 4
+- Train/test split: 80% / 20%
+- Random state: 42
+
+The current saved model reaches **100% test accuracy on the supplied split**, but the dataset only contains 80 rows and follows a simple label pattern. This number should therefore be interpreted only as the result of this project dataset, not as guaranteed performance on real supermarket data.
 
 ## Limitations
 
-- The dataset is simulated and small.
-- The model has not been validated on real supermarket operational data.
-- Weather meanings for code `0` and `1` are not documented in the supplied project files.
-- The current model is binary: **Safe** or **Potential Waste**.
-- The current web version improves product usability but does not solve limitations in the underlying dataset.
-
-## Recommended Next ML Upgrade
-
-After the web version is stable, improve the dataset with real, clearly defined features such as product category, expiry information, average daily sales, promotions, and historical waste. Then compare the Decision Tree with other suitable models.
-
-## SDG Contribution
-
-The project is aligned with **SDG 12: Responsible Consumption and Production** by exploring how inventory and sales data can support food-waste awareness and stock-management decisions.
+- Small dataset
+- Dataset source is not documented in the supplied files
+- Weather code meanings are not documented
+- No expiry-date, product-category, promotion, or historical-demand features
+- Current result is intended for an academic project demonstration
 
 ## Author
 

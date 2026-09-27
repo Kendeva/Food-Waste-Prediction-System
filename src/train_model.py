@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import json
 from datetime import datetime, timezone
 from pathlib import Path
@@ -23,7 +21,7 @@ FEATURES = ["stok", "terjual", "hari_ke", "cuaca", "hari_besar", "sisa_persen"]
 TARGET = "label"
 
 
-def train_and_save_model() -> dict:
+def load_dataset():
     if not DATASET_PATH.exists():
         raise FileNotFoundError(
             "Dataset not found. Add 'data_penjualan.csv' inside the data/ folder."
@@ -31,9 +29,31 @@ def train_and_save_model() -> dict:
 
     data = pd.read_csv(DATASET_PATH)
     required_columns = FEATURES + [TARGET]
-    missing = [column for column in required_columns if column not in data.columns]
-    if missing:
-        raise ValueError(f"Dataset is missing required columns: {', '.join(missing)}")
+    missing_columns = [
+        column for column in required_columns if column not in data.columns
+    ]
+
+    if missing_columns:
+        missing_text = ", ".join(missing_columns)
+        raise ValueError(f"Dataset is missing required columns: {missing_text}")
+
+    if data[required_columns].isnull().any().any():
+        raise ValueError("Dataset contains missing values in required columns.")
+
+    if not set(data[TARGET].unique()).issubset({0, 1}):
+        raise ValueError("Label values must only contain 0 and 1.")
+
+    if (data["stok"] <= 0).any():
+        raise ValueError("Stock values must be greater than 0.")
+
+    if (data["terjual"] < 0).any() or (data["terjual"] > data["stok"]).any():
+        raise ValueError("Sold values must be between 0 and the available stock.")
+
+    return data
+
+
+def train_and_save_model():
+    data = load_dataset()
 
     X = data[FEATURES]
     y = data[TARGET]
@@ -52,19 +72,18 @@ def train_and_save_model() -> dict:
         random_state=42,
     )
     model.fit(X_train, y_train)
+
     accuracy = float(model.score(X_test, y_test))
 
     MODEL_DIR.mkdir(parents=True, exist_ok=True)
     IMAGE_DIR.mkdir(parents=True, exist_ok=True)
 
-    bundle = {
+    model_bundle = {
         "model": model,
         "features": FEATURES,
         "classes": {0: "Safe", 1: "Potential Waste"},
-        "accuracy": accuracy,
-        "dataset_rows": int(len(data)),
     }
-    joblib.dump(bundle, MODEL_PATH)
+    joblib.dump(model_bundle, MODEL_PATH)
 
     metadata = {
         "model": "Decision Tree Classifier",
@@ -72,6 +91,8 @@ def train_and_save_model() -> dict:
         "max_depth": 4,
         "accuracy": accuracy,
         "dataset_rows": int(len(data)),
+        "training_rows": int(len(X_train)),
+        "testing_rows": int(len(X_test)),
         "features": FEATURES,
         "trained_at_utc": datetime.now(timezone.utc).isoformat(),
     }
@@ -96,4 +117,6 @@ if __name__ == "__main__":
     result = train_and_save_model()
     print("Model training completed.")
     print(f"Accuracy: {result['accuracy']:.2%}")
-    print(f"Saved to: {MODEL_PATH}")
+    print(f"Training rows: {result['training_rows']}")
+    print(f"Testing rows: {result['testing_rows']}")
+    print(f"Saved model: {MODEL_PATH}")

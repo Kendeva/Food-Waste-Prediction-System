@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from pathlib import Path
 
 import joblib
@@ -9,60 +7,65 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 MODEL_PATH = BASE_DIR / "models" / "food_waste_model.joblib"
 
 
-def load_model_bundle() -> dict:
+def load_model_bundle():
     if not MODEL_PATH.exists():
         raise FileNotFoundError(
             "Trained model not found. Run 'python src/train_model.py' first."
         )
-    return joblib.load(MODEL_PATH)
+
+    bundle = joblib.load(MODEL_PATH)
+
+    if "model" not in bundle or "features" not in bundle:
+        raise ValueError("The saved model file is incomplete. Train the model again.")
+
+    return bundle
 
 
-def build_recommendation(prediction: int, remaining_percentage: float) -> str:
+def build_recommendation(prediction, remaining_percentage):
     if prediction == 1:
         if remaining_percentage >= 60:
             return (
-                "A large share of the stock remains. Consider reviewing the next "
-                "restock quantity and using the current inventory first."
+                "A large amount of stock remains. Review the next restock quantity "
+                "and prioritize the current inventory."
             )
+
         return (
-            "The model identifies potential waste. Review sales progress before "
-            "adding more stock and consider actions to move the remaining inventory."
+            "The model detects potential waste. Review current sales before adding "
+            "more stock and consider actions to reduce the remaining inventory."
         )
 
     if remaining_percentage <= 15:
         return (
-            "Remaining stock is low. The current condition is classified as safe, "
-            "but monitor availability before the next restock."
+            "Remaining stock is low. The condition is classified as safe, but keep "
+            "monitoring availability before the next restock."
         )
+
     return (
-        "The current condition is classified as safe. Continue monitoring sales "
-        "and remaining inventory before the next restock."
+        "The condition is classified as safe. Continue monitoring sales and remaining "
+        "inventory before the next restock."
     )
 
 
-def predict_food_waste(
-    *,
-    stock: int,
-    sold: int,
-    day_index: int,
-    weather_code: int,
-    special_day: bool,
-) -> dict:
+def predict_food_waste(stock, sold, day_index, weather_code, special_day):
     if stock <= 0:
         raise ValueError("Stock must be greater than 0.")
     if sold < 0:
         raise ValueError("Items sold cannot be negative.")
     if sold > stock:
-        raise ValueError("Items sold cannot be greater than the available stock.")
+        raise ValueError("Items sold cannot be greater than available stock.")
+    if day_index < 1 or day_index > 30:
+        raise ValueError("Day index must be between 1 and 30.")
+    if weather_code not in [0, 1]:
+        raise ValueError("Weather code must be 0 or 1.")
+
+    remaining = stock - sold
+    remaining_percentage = (remaining / stock) * 100
 
     bundle = load_model_bundle()
     model = bundle["model"]
     features = bundle["features"]
 
-    remaining = stock - sold
-    remaining_percentage = (remaining / stock) * 100
-
-    model_input = pd.DataFrame(
+    input_data = pd.DataFrame(
         [
             {
                 "stok": stock,
@@ -76,13 +79,13 @@ def predict_food_waste(
         columns=features,
     )
 
-    prediction = int(model.predict(model_input)[0])
+    prediction = int(model.predict(input_data)[0])
 
     confidence = None
     if hasattr(model, "predict_proba"):
-        probabilities = model.predict_proba(model_input)[0]
-        class_positions = {int(value): index for index, value in enumerate(model.classes_)}
-        confidence = float(probabilities[class_positions[prediction]])
+        probabilities = model.predict_proba(input_data)[0]
+        class_index = list(model.classes_).index(prediction)
+        confidence = float(probabilities[class_index])
 
     return {
         "prediction": prediction,
